@@ -99,6 +99,8 @@ export default function ResultsPage() {
   const [loading, setLoading] = useState(true)
   const [submissions, setSubmissions] = useState<any[]>([])
   const [isExporting, setIsExporting] = useState(false)
+  const [passwordInput, setPasswordInput] = useState("")
+  const [isExportAuthorized, setIsExportAuthorized] = useState(false)
   const router = useRouter()
 
   // Fetch submissions from Firebase
@@ -189,6 +191,15 @@ export default function ResultsPage() {
     }
   }
 
+  const handleAuthorize = () => {
+    if (passwordInput === "1234") {
+      setIsExportAuthorized(true)
+      setPasswordInput("")
+    } else {
+      alert("Incorrect password")
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
@@ -214,14 +225,29 @@ export default function ResultsPage() {
             <Button onClick={handleRetakeQuiz} variant="outline">
               Retake Quiz
             </Button>
-            <Button 
-              onClick={handleExportToExcel} 
-              disabled={isExporting || submissions.length === 0}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              {isExporting ? "Exporting..." : `Export to Excel (${submissions.length})`}
-            </Button>
+            {!isExportAuthorized ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="password"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="Enter password to export"
+                  className="px-3 py-2 border rounded"
+                />
+                <Button onClick={handleAuthorize} disabled={!passwordInput}>
+                  Unlock Export
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={handleExportToExcel}
+                disabled={isExporting || submissions.length === 0}
+                className="gap-2"
+              >
+                <Download className="w-4 h-4" />
+                {isExporting ? "Exporting..." : `Export to Excel (${submissions.length})`}
+              </Button>
+            )}
           </div>
         </div>
 
