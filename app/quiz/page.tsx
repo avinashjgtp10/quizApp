@@ -231,6 +231,107 @@ export const questions = [
       { value: "language", label: "Difficulty understanding English content" },
     ],
   },
+
+  {
+    id: 19,
+    section: "Learning Preferences",
+    question: "Your current semester ",
+    type: "radio" as const,
+    options: [
+      { value: "Sem-I", label: "Sem-I" },
+      { value: "Sem-II", label: "Sem-II" },
+      { value: "Sem-III", label: "Sem-III" },
+      { value: "Sem-IV", label: "Sem-IV" },
+      { value: "Sem-v", label: "Sem-v" },
+      { value: "Sem-vI", label: "Sem-vI" }
+    ],
+  },
+
+  {
+    id: 20,
+    section: "Learning Preferences",
+    question: "Percentage",
+    type: "radio" as const,
+    options: [
+      { value: "Below 50%", label: "Below 50%" },
+      { value: "50% to 59%", label: "50% to 59%" },
+      { value: "60% to 69%", label: "60% to 69%" },
+      { value: "70% to 79%", label: "70% to 79%" },
+      { value: "Above", label: "80% to Above" },
+      
+    ],
+  },
+
+  {
+    id: 21,
+    section: "Learning Preferences",
+    question: "Preferred learning style",
+    type: "checkbox" as const,
+    options: [
+      { value: "MCQ", label: "MCQ" },
+      { value: "Theoretical", label: "Theoretical" },
+      { value: "Practical", label: "Practical" },
+      ],
+  },
+
+{
+    id: 22,
+    section: "Learning Preferences",
+    question: "Tool/Platforms you have use ",
+    type: "checkbox" as const,
+    options: [
+      { value: "Git/GitHub", label: "Git/GitHub" },
+      { value: "AWS/Azure", label: "AWS/Azure" },
+      { value: "Jupyter", label: "Jupyter Notebook" },
+      { value: "Android", label: "Android Studio" },
+      { value: "VS Code", label: "VS Code" },
+      ],
+  },
+
+  {
+    id: 23,
+    section: "Learning Preferences",
+    question: "Addon / Online courses already completed  ",
+    type: "checkbox" as const,
+    options: [
+      { value: "Python", label: "Python Programming" },
+      { value: "Data Science", label: "Data Science" },
+      { value: "Machine Learning", label: "Machine Learning" },
+      { value: "Web Development", label: "Web Development" },
+      { value: "Cloud Computing", label: "Cloud Computing" },
+      { value: "Cyber Security", label: "Cyber Security" },
+      { value: "None", label: "None" },
+      ],
+  },
+
+  {
+    id: 24,
+    section: "Learning Preferences",
+    question: "Preferred learning mode ",
+    type: "checkbox" as const,
+    options: [
+      { value: "Video Based", label: "Video Based" },
+      { value: "Hands on/Practical", label: "Hands on/Practical" },
+      { value: "Reading/ Documentation", label: "Reading/ Documentation" },
+      { value: "Mixed", label: "Mixed" },
+      ],
+  },
+
+  {
+    id: 25,
+    section: "Learning Preferences",
+    question: "Certification obtained ",
+    type: "checkbox" as const,
+    options: [
+      { value: "NPTEL", label: "NPTEL" },
+      { value: "Coursera", label: "Coursera" },
+      { value: "Udemy", label: "Udemy" },
+      { value: "AWS/Google", label: "AWS/Google" },
+      { value: "None", label: "None" },
+      ],
+  },
+
+
 ]
 
 export default function QuizPage() {
