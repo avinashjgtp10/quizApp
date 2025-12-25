@@ -92,6 +92,82 @@ const courses: Course[] = [
     tags: ["Cybersecurity", "Ethical Hacking", "Network Security", "Penetration Testing"],
     image: "/placeholder.svg?height=200&width=300",
   },
+
+  {
+    id: 6,
+    title: "Networking & System",
+    description: "Understand computer networks, system architecture, protocols, servers.",
+    instructor: "Arjun Mehta",
+    duration: "90 hours",
+    level: "Intermediate",
+    rating: 4.5,
+    students: 18000,
+    price: "₹6,499",
+    tags: ["Cybersecurity", "Ethical Hacking", "Network Security", "Penetration Testing"],
+    image: "/placeholder.svg?height=200&width=300",
+  },
+
+  {
+    id: 7,
+    title: "DevOps & Software Development",
+    description: "Learn software development with DevOps tools like Git, CI/CD, Docker, and cloud deployment for building and delivering applications .",
+    instructor: "Arjun Mehta",
+    duration: "90 hours",
+    level: "Intermediate",
+    rating: 4.5,
+    students: 18000,
+    price: "₹5,499",
+    tags: ["Cybersecurity", "Ethical Hacking", "Network Security", "Penetration Testing"],
+    image: "/placeholder.svg?height=200&width=300",
+  },
+
+  {
+    id: 8,
+    title: "Big Data, Analytics & Data Engineering",
+    description: "Learn big data processing, data analytics.",
+    instructor: "Arjun Mehta",
+    duration: "90 hours",
+    level: "Intermediate",
+    rating: 4.5,
+    students: 18000,
+    price: "₹5,499",
+    tags: ["Cybersecurity", "Ethical Hacking", "Network Security", "Penetration Testing"],
+    image: "/placeholder.svg?height=200&width=300",
+  },
+
+  {
+    id: 9,
+    title: "Software Engineering & Architecture",
+    description: "Learn software design principles, system architecture.",
+    instructor: "Arjun Mehta",
+    duration: "90 hours",
+    level: "Intermediate",
+    rating: 4.5,
+    students: 18000,
+    price: "₹5,499",
+    tags: ["Cybersecurity", "Ethical Hacking", "Network Security", "Penetration Testing"],
+    image: "/placeholder.svg?height=200&width=300",
+  },
+  
+  {
+    id: 10,
+    title: "Tech + Management / Leadership",
+    description: "leadership, project management, and team collaboration for real-world projects.",
+    instructor: "Arjun Mehta",
+    duration: "90 hours",
+    level: "Intermediate",
+    rating: 4.5,
+    students: 18000,
+    price: "₹5,499",
+    tags: ["Cybersecurity", "Ethical Hacking", "Network Security", "Penetration Testing"],
+    image: "/placeholder.svg?height=200&width=300",
+  },
+
+ 
+
+
+ 
+
 ]
 
 export default function ResultsPage() {
@@ -129,7 +205,7 @@ export default function ResultsPage() {
 
     if (quizAnswers) {
       const answers = JSON.parse(quizAnswers)
-      
+
       // Submit answers to Firebase
       const submitToFirebase = async () => {
         try {
@@ -199,6 +275,21 @@ export default function ResultsPage() {
       alert("Incorrect password")
     }
   }
+  const getRandomResult = (arr) => {
+    const result = [];
+    const copy = [...arr]; // create a copy to avoid modifying original
+    const count = Math.floor(Math.random() * arr.length) + 1; // random count between 1 and array length
+
+    for (let i = 0; i < count; i++) {
+      const randomIndex = Math.floor(Math.random() * copy.length);
+      result.push(copy.splice(randomIndex, 1)[0]); // remove element to avoid duplicates
+    }
+
+    return result;
+
+
+  }
+
 
   if (loading) {
     return (
@@ -252,7 +343,7 @@ export default function ResultsPage() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {recommendedCourses.map((course) => (
+          {getRandomResult(recommendedCourses).map((course) => (
             <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
