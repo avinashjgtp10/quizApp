@@ -65,9 +65,39 @@ export const questions = [
     ],
   },
 
+   {
+    id: 7,
+    section: "Learning Preferences",
+    question: "Your current semester ",
+    type: "radio" as const,
+    options: [
+      { value: "Sem-I", label: "Sem-I" },
+      { value: "Sem-II", label: "Sem-II" },
+      { value: "Sem-III", label: "Sem-III" },
+      { value: "Sem-IV", label: "Sem-IV" },
+      { value: "Sem-v", label: "Sem-v" },
+      { value: "Sem-vI", label: "Sem-vI" }
+    ],
+  },
+
+  {
+    id: 8,
+    section: "Learning Preferences",
+    question: "Percentage",
+    type: "radio" as const,
+    options: [
+      { value: "Below 50%", label: "Below 50%" },
+      { value: "50% to 59%", label: "50% to 59%" },
+      { value: "60% to 69%", label: "60% to 69%" },
+      { value: "70% to 79%", label: "70% to 79%" },
+      { value: "Above", label: "80% to Above" },
+      
+    ],
+  },
+
   // === Section B: Background Knowledge ===
   {
-    id: 7,
+    id: 9,
     section: "Background Knowledge",
     question: "Which of the following core subjects have you completed?",
     type: "checkbox" as const,
@@ -83,7 +113,7 @@ export const questions = [
     ],
   },
   {
-    id: 8,
+    id: 10,
     section: "Background Knowledge",
     question: "Which programming languages do you know?",
     type: "checkbox" as const,
@@ -99,7 +129,7 @@ export const questions = [
     ],
   },
   {
-    id: 9,
+    id: 11,
     section: "Background Knowledge",
     question: "Have you worked on any Software Development Projects?",
     type: "radio" as const,
@@ -109,7 +139,7 @@ export const questions = [
     ],
   },
   {
-    id: 10,
+    id: 12,
     section: "Background Knowledge",
     question: "How would you rate your technical proficiency overall?",
     type: "radio" as const,
@@ -122,7 +152,7 @@ export const questions = [
 
   // === Section C: Interests and Goals ===
   {
-    id: 11,
+    id: 13,
     section: "Interests and Goals",
     question: "What are your top areas of interest in technology? (Select up to 3)",
     type: "checkbox" as const,
@@ -141,7 +171,7 @@ export const questions = [
     ],
   },
   {
-    id: 12,
+    id: 14,
     section: "Interests and Goals",
     question: "What is your career goal after graduation?",
     type: "radio" as const,
@@ -158,7 +188,7 @@ export const questions = [
     ],
   },
   {
-    id: 13,
+    id: 15,
     section: "Interests and Goals",
     question: "What motivates you to take an add-on course?",
     type: "checkbox" as const,
@@ -171,7 +201,7 @@ export const questions = [
 
   // === Section D: Learning Preferences ===
   {
-    id: 14,
+    id: 16,
     section: "Learning Preferences",
     question: "How many hours per week can you dedicate to an add-on course?",
     type: "radio" as const,
@@ -183,7 +213,7 @@ export const questions = [
     ],
   },
   {
-    id: 15,
+    id: 17,
     section: "Learning Preferences",
     question: "Preferred course format:",
     type: "radio" as const,
@@ -197,7 +227,7 @@ export const questions = [
     ],
   },
   {
-    id: 16,
+    id: 18,
     section: "Learning Preferences",
     question: "Preferred course length:",
     type: "radio" as const,
@@ -210,7 +240,7 @@ export const questions = [
     ],
   },
   {
-    id: 17,
+    id: 19,
     section: "Learning Preferences",
     question: "Are you willing to pay for a course if it offers certification or internships?",
     type: "radio" as const,
@@ -221,7 +251,7 @@ export const questions = [
     ],
   },
   {
-    id: 18,
+    id: 20,
     section: "Learning Preferences",
     question: "Any challenges you face while learning online?",
     type: "checkbox" as const,
@@ -232,35 +262,9 @@ export const questions = [
     ],
   },
 
-  {
-    id: 19,
-    section: "Learning Preferences",
-    question: "Your current semester ",
-    type: "radio" as const,
-    options: [
-      { value: "Sem-I", label: "Sem-I" },
-      { value: "Sem-II", label: "Sem-II" },
-      { value: "Sem-III", label: "Sem-III" },
-      { value: "Sem-IV", label: "Sem-IV" },
-      { value: "Sem-v", label: "Sem-v" },
-      { value: "Sem-vI", label: "Sem-vI" }
-    ],
-  },
+  
 
-  {
-    id: 20,
-    section: "Learning Preferences",
-    question: "Percentage",
-    type: "radio" as const,
-    options: [
-      { value: "Below 50%", label: "Below 50%" },
-      { value: "50% to 59%", label: "50% to 59%" },
-      { value: "60% to 69%", label: "60% to 69%" },
-      { value: "70% to 79%", label: "70% to 79%" },
-      { value: "Above", label: "80% to Above" },
-      
-    ],
-  },
+  
 
   {
     id: 21,
