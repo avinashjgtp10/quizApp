@@ -234,9 +234,7 @@ export default function ResultsPage() {
                   placeholder="Enter password to export"
                   className="px-3 py-2 border rounded"
                 />
-                <Button onClick={handleAuthorize} disabled={!passwordInput}>
-                  Unlock Export
-                </Button>
+                
               </div>
             ) : (
               <Button
