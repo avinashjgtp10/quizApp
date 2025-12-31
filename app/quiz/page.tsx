@@ -1,16 +1,17 @@
 "use client"
 
 import { useState } from "react"
+import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { useRouter } from "next/navigation"
 import { QuizQuestion } from "@/components/quiz-question"
-
 export const questions = [
   // === Section A: Student Profile ===
   {
     id: 1,
+    name:"name",
     section: "Student Profile",
     question: "What is your name?",
     type: "text" as const,
@@ -18,6 +19,7 @@ export const questions = [
   },
   {
     id: 2,
+    name:"age",
     section: "Student Profile",
     question: "What is your age?",
     type: "number" as const,
@@ -25,6 +27,7 @@ export const questions = [
   },
   {
     id: 3,
+    name:"gender",
     section: "Student Profile",
     question: "What is your gender?",
     type: "radio" as const,
@@ -36,6 +39,7 @@ export const questions = [
   },
   {
     id: 4,
+    name:"institution",
     section: "Student Profile",
     question: "What is your institution name?",
     type: "text" as const,
@@ -43,6 +47,7 @@ export const questions = [
   },
   {
     id: 5,
+    name:"degree",
     section: "Student Profile",
     question: "What is your degree program?",
     type: "radio" as const,
@@ -55,6 +60,7 @@ export const questions = [
   },
   {
     id: 6,
+    name:"year_of_study",
     section: "Student Profile",
     question: "What is your current year of study?",
     type: "radio" as const,
@@ -65,8 +71,9 @@ export const questions = [
     ],
   },
 
-   {
-    id: 7,
+  {
+    id:7,
+    name:"semester",
     section: "Learning Preferences",
     question: "Your current semester ",
     type: "radio" as const,
@@ -81,7 +88,8 @@ export const questions = [
   },
 
   {
-    id: 8,
+    id:8,
+    name:"percentage",
     section: "Learning Preferences",
     question: "Percentage",
     type: "radio" as const,
@@ -91,13 +99,14 @@ export const questions = [
       { value: "60% to 69%", label: "60% to 69%" },
       { value: "70% to 79%", label: "70% to 79%" },
       { value: "Above", label: "80% to Above" },
-      
+
     ],
   },
 
   // === Section B: Background Knowledge ===
   {
-    id: 9,
+    id:9,
+    name:"core_subjects",
     section: "Background Knowledge",
     question: "Which of the following core subjects have you completed?",
     type: "checkbox" as const,
@@ -114,6 +123,7 @@ export const questions = [
   },
   {
     id: 10,
+    name:"programming_languages",
     section: "Background Knowledge",
     question: "Which programming languages do you know?",
     type: "checkbox" as const,
@@ -129,7 +139,8 @@ export const questions = [
     ],
   },
   {
-    id: 11,
+    id:11,
+    name:"worked_on_projects",
     section: "Background Knowledge",
     question: "Have you worked on any Software Development Projects?",
     type: "radio" as const,
@@ -140,6 +151,7 @@ export const questions = [
   },
   {
     id: 12,
+    name:"technical_level",
     section: "Background Knowledge",
     question: "How would you rate your technical proficiency overall?",
     type: "radio" as const,
@@ -153,6 +165,7 @@ export const questions = [
   // === Section C: Interests and Goals ===
   {
     id: 13,
+    name:"interests",
     section: "Interests and Goals",
     question: "What are your top areas of interest in technology? (Select up to 3)",
     type: "checkbox" as const,
@@ -172,6 +185,7 @@ export const questions = [
   },
   {
     id: 14,
+    name:"career_goal",
     section: "Interests and Goals",
     question: "What is your career goal after graduation?",
     type: "radio" as const,
@@ -189,6 +203,7 @@ export const questions = [
   },
   {
     id: 15,
+    name:"motivation",
     section: "Interests and Goals",
     question: "What motivates you to take an add-on course?",
     type: "checkbox" as const,
@@ -201,7 +216,8 @@ export const questions = [
 
   // === Section D: Learning Preferences ===
   {
-    id: 16,
+    id:16,
+    name:"weekly_hours",
     section: "Learning Preferences",
     question: "How many hours per week can you dedicate to an add-on course?",
     type: "radio" as const,
@@ -213,7 +229,8 @@ export const questions = [
     ],
   },
   {
-    id: 17,
+    id:17,
+    name:"course_format",
     section: "Learning Preferences",
     question: "Preferred course format:",
     type: "radio" as const,
@@ -227,7 +244,8 @@ export const questions = [
     ],
   },
   {
-    id: 18,
+    id:18,
+    name:"course_length",
     section: "Learning Preferences",
     question: "Preferred course length:",
     type: "radio" as const,
@@ -240,7 +258,8 @@ export const questions = [
     ],
   },
   {
-    id: 19,
+    id:19,
+    name:"willing_to_pay",
     section: "Learning Preferences",
     question: "Are you willing to pay for a course if it offers certification or internships?",
     type: "radio" as const,
@@ -251,7 +270,8 @@ export const questions = [
     ],
   },
   {
-    id: 20,
+    id:20,
+    name:"learning_challenges",
     section: "Learning Preferences",
     question: "Any challenges you face while learning online?",
     type: "checkbox" as const,
@@ -261,13 +281,9 @@ export const questions = [
       { value: "language", label: "Difficulty understanding English content" },
     ],
   },
-
-  
-
-  
-
   {
-    id: 21,
+    id:21,
+    name:"learning_style",
     section: "Learning Preferences",
     question: "Preferred learning style",
     type: "checkbox" as const,
@@ -275,11 +291,12 @@ export const questions = [
       { value: "MCQ", label: "MCQ" },
       { value: "Theoretical", label: "Theoretical" },
       { value: "Practical", label: "Practical" },
-      ],
+    ],
   },
 
-{
-    id: 22,
+  {
+    id:22,
+    name:"tools_used",
     section: "Learning Preferences",
     question: "Tool/Platforms you have use ",
     type: "checkbox" as const,
@@ -289,11 +306,12 @@ export const questions = [
       { value: "Jupyter", label: "Jupyter Notebook" },
       { value: "Android", label: "Android Studio" },
       { value: "VS Code", label: "VS Code" },
-      ],
+    ],
   },
 
   {
-    id: 23,
+    id:23,
+    name:"courses_completed",
     section: "Learning Preferences",
     question: "Addon / Online courses already completed  ",
     type: "checkbox" as const,
@@ -305,12 +323,13 @@ export const questions = [
       { value: "Cloud Computing", label: "Cloud Computing" },
       { value: "Cyber Security", label: "Cyber Security" },
       { value: "None", label: "None" },
-      ],
+    ],
   },
 
   {
-    id: 24,
-    section: "Learning Preferences",
+    id:24,
+    name:"learning_mode",
+    section: "learning_mode",
     question: "Preferred learning mode ",
     type: "checkbox" as const,
     options: [
@@ -318,11 +337,12 @@ export const questions = [
       { value: "Hands on/Practical", label: "Hands on/Practical" },
       { value: "Reading/ Documentation", label: "Reading/ Documentation" },
       { value: "Mixed", label: "Mixed" },
-      ],
+    ],
   },
 
   {
-    id: 25,
+    id:25,
+    name:"certifications",
     section: "Learning Preferences",
     question: "Certification obtained ",
     type: "checkbox" as const,
@@ -332,21 +352,20 @@ export const questions = [
       { value: "Udemy", label: "Udemy" },
       { value: "AWS/Google", label: "AWS/Google" },
       { value: "None", label: "None" },
-      ],
+    ],
   },
-
 
 ]
 
 export default function QuizPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<Record<number, string | string[]>>({})
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [error, setError] = useState("")
   const router = useRouter()
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const currentQ = questions[currentQuestion]
-    const currentAnswer = answers[currentQ.id]
+    const currentAnswer = answers[currentQ.name]
 
     const hasAnswer =
       currentAnswer &&
@@ -358,79 +377,120 @@ export default function QuizPage() {
       return
     }
 
-    if (currentQ.id === 2) {
+    if (currentQ.name === "age") {
       const age = Number(currentAnswer)
-      if (isNaN(age) || age >= 21) {
-        setError("⚠️ Age must be below 21 to proceed.")
+      if (isNaN(age) || age <= 0 || age >= 21) {
+        setError("⚠️ Age must be below 21.")
         return
       }
     }
 
     setError("")
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion((prev) => prev + 1)
     } else {
-      localStorage.setItem("quizAnswers", JSON.stringify(answers))
-      router.push("/results")
+      try {
+        const response = await axios.post(
+          "https://course-lbe8.onrender.com/api/surveys",
+          answers
+        )
+
+        const surveyId = response.data.id
+
+        if (surveyId) {
+          router.push(`/results?id=${surveyId}`)
+        } else {
+          alert("Survey ID not received from server")
+        }
+      } catch (err: any) {
+        console.error(err.response?.data || err.message)
+        alert("Failed to submit survey")
+      }
     }
   }
 
   const handlePrevious = () => {
-    if (currentQuestion > 0) setCurrentQuestion((prev) => prev - 1)
+    if (currentQuestion > 0) {
+      setCurrentQuestion((prev) => prev - 1)
+    }
   }
 
   const handleAnswerChange = (value: string | string[]) => {
+    const currentQ = questions[currentQuestion]
     setAnswers((prev) => ({
       ...prev,
-      [questions[currentQuestion].id]: value,
+      [currentQ.name]: value,
     }))
     setError("")
   }
 
-  const progress = ((currentQuestion + 1) / questions.length) * 100
-  const currentAnswer = answers[questions[currentQuestion].id]
-  const hasAnswer =
-    currentAnswer &&
-    ((typeof currentAnswer === "string" && currentAnswer.trim() !== "") ||
-      (Array.isArray(currentAnswer) && currentAnswer.length > 0))
+ const progress = ((currentQuestion + 1) / questions.length) * 100
+
+const currentAnswer = answers[questions[currentQuestion].name]
+
+const hasAnswer =
+  currentAnswer &&
+  ((typeof currentAnswer === "string" && currentAnswer.trim() !== "") ||
+    (Array.isArray(currentAnswer) && currentAnswer.length > 0))
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-4 transition-all">
-      <div className="max-w-3xl mx-auto pt-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold mb-4 text-indigo-800">Course Recommendation Questionnaire</h1>
-          <Progress value={progress} className="w-full" />
-          <p className="mt-2 text-sm text-gray-600">
-            Question {currentQuestion + 1} of {questions.length}
-          </p>
-        </div>
+  <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-4 transition-all">
+    <div className="max-w-3xl mx-auto pt-8">
 
-        <Card>
-          <CardHeader>
-            <CardDescription>
-              Please provide accurate information for better course recommendations.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <QuizQuestion
-              question={questions[currentQuestion]}
-              value={currentAnswer || (questions[currentQuestion].type === "checkbox" ? [] : "")}
-              onChange={handleAnswerChange}
-            />
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold mb-4 text-indigo-800">
+          Course Recommendation Questionnaire
+        </h1>
 
-            {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
+        <Progress value={progress} className="w-full" />
 
-            <div className="flex justify-between mt-8">
-              <Button variant="outline" onClick={handlePrevious} disabled={currentQuestion === 0}>
-                Previous
-              </Button>
-              <Button onClick={handleNext}>
-                {currentQuestion === questions.length - 1 ? "Get Recommendations" : "Next"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <p className="mt-2 text-sm text-gray-600">
+          Question {currentQuestion + 1} of {questions.length}
+        </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardDescription>
+            Please provide accurate information for better course recommendations.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <QuizQuestion
+            question={questions[currentQuestion]}
+            value={
+              currentAnswer ||
+              (questions[currentQuestion].type === "checkbox" ? [] : "")
+            }
+            onChange={handleAnswerChange}
+          />
+
+          {error && (
+            <p className="text-red-500 text-sm mt-2 text-center">
+              {error}
+            </p>
+          )}
+
+          <div className="flex justify-between mt-8">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentQuestion === 0}
+            >
+              Previous
+            </Button>
+
+            <Button onClick={handleNext}>
+              {currentQuestion === questions.length - 1
+                ? "Get Recommendations"
+                : "Next"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
-  )
+  </div>
+)
 }
