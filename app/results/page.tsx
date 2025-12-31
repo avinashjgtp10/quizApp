@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter} from "next/navigation"
 import axios from "axios"
 
 import { Button } from "@/components/ui/button"
@@ -167,10 +167,10 @@ const courses: Course[] = [
 /* =========================
    COMPONENT
 ========================= */
-export default function ResultsPage() {
+export default function ResultsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+ 
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const surveyId = searchParams.get("id")
+  const surveyId = searchParams.id
 
   const [recommendedCourses, setRecommendedCourses] = useState<Course[]>([])
   const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([])
