@@ -14,7 +14,7 @@ export default function HomePage() {
      AUTHORIZE EXPORT
   ========================= */
   const handleAuthorize = () => {
-    if (passwordInput === "1984") {
+    if (passwordInput === "dnyanu@2021") {
       setIsAuthorized(true)
       setPasswordInput("")
       alert("Export unlocked ✅")
