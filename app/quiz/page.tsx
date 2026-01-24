@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+
+import { useState, useEffect } from "react"
 import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { useRouter } from "next/navigation"
 import { QuizQuestion } from "@/components/quiz-question"
+
 export const questions = [
   // === Section A: Student Profile ===
   {
@@ -363,7 +365,7 @@ export default function QuizPage() {
   const [error, setError] = useState("")
   const router = useRouter()
 
-  const handleNext = async () => {
+  const handleNext = () => {
     const currentQ = questions[currentQuestion]
     const currentAnswer = answers[currentQ.name]
 
@@ -387,27 +389,15 @@ export default function QuizPage() {
 
     setError("")
 
+    // NORMAL NEXT
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion((prev) => prev + 1)
-    } else {
-      try {
-        const response = await axios.post(
-          "https://course-lbe8.onrender.com/api/surveys",
-          answers
-        )
-
-        const surveyId = response.data.id
-
-        if (surveyId) {
-          router.push(`/results?id=${surveyId}`)
-        } else {
-          alert("Survey ID not received from server")
-        }
-      } catch (err: any) {
-        console.error(err.response?.data || err.message)
-        alert("Failed to submit survey")
-      }
+      return
     }
+
+    // LAST QUESTION → TEMP SAVE ONLY
+    localStorage.setItem("survey_answers", JSON.stringify(answers))
+    router.push("/results")
   }
 
   const handlePrevious = () => {
@@ -425,72 +415,61 @@ export default function QuizPage() {
     setError("")
   }
 
- const progress = ((currentQuestion + 1) / questions.length) * 100
-
-const currentAnswer = answers[questions[currentQuestion].name]
-
-const hasAnswer =
-  currentAnswer &&
-  ((typeof currentAnswer === "string" && currentAnswer.trim() !== "") ||
-    (Array.isArray(currentAnswer) && currentAnswer.length > 0))
+  const progress = ((currentQuestion + 1) / questions.length) * 100
+  const currentAnswer = answers[questions[currentQuestion].name]
 
   return (
-  <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-4 transition-all">
-    <div className="max-w-3xl mx-auto pt-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-4">
+      <div className="max-w-3xl mx-auto pt-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold mb-4 text-indigo-800">
+            Course Recommendation Questionnaire
+          </h1>
+          <Progress value={progress} />
+          <p className="mt-2 text-sm text-gray-600">
+            Question {currentQuestion + 1} of {questions.length}
+          </p>
+        </div>
 
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-4 text-indigo-800">
-          Course Recommendation Questionnaire
-        </h1>
+        <Card>
+          <CardHeader>
+            <CardDescription>
+              Please provide accurate information for better recommendations.
+            </CardDescription>
+          </CardHeader>
 
-        <Progress value={progress} className="w-full" />
+          <CardContent>
+            <QuizQuestion
+              question={questions[currentQuestion]}
+              value={
+                currentAnswer ||
+                (questions[currentQuestion].type === "checkbox" ? [] : "")
+              }
+              onChange={handleAnswerChange}
+            />
 
-        <p className="mt-2 text-sm text-gray-600">
-          Question {currentQuestion + 1} of {questions.length}
-        </p>
+            {error && (
+              <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
+            )}
+
+            <div className="flex justify-between mt-8">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentQuestion === 0}
+              >
+                Previous
+              </Button>
+
+              <Button onClick={handleNext}>
+                {currentQuestion === questions.length - 1
+                  ? "Get Recommendations"
+                  : "Next"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardDescription>
-            Please provide accurate information for better course recommendations.
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <QuizQuestion
-            question={questions[currentQuestion]}
-            value={
-              currentAnswer ||
-              (questions[currentQuestion].type === "checkbox" ? [] : "")
-            }
-            onChange={handleAnswerChange}
-          />
-
-          {error && (
-            <p className="text-red-500 text-sm mt-2 text-center">
-              {error}
-            </p>
-          )}
-
-          <div className="flex justify-between mt-8">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={currentQuestion === 0}
-            >
-              Previous
-            </Button>
-
-            <Button onClick={handleNext}>
-              {currentQuestion === questions.length - 1
-                ? "Get Recommendations"
-                : "Next"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
-  </div>
-)
+  )
 }

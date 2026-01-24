@@ -1,30 +1,31 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter} from "next/navigation"
+import { useRouter } from "next/navigation"
 import axios from "axios"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Download } from "lucide-react"
+import moment from "moment";
 
 import { ref, push, onValue } from "firebase/database"
 import { database } from "@/lib/firebase"
 
 interface Course {
   //survery_response_id:number
-  id:number
-  title:string
-  description:string
-  instructor:string
-  duration:string
-  level:string
-  rating:number
-  students:number
-  price:string
-  tags:string[]
-  image:string
+  id: number
+  title: string
+  description: string
+  instructor: string
+  duration: string
+  level: string
+  rating: number
+  students: number
+  price: string
+  tags: string[]
+  image: string
 }
 
 const courses: Course[] = [
@@ -149,7 +150,7 @@ const courses: Course[] = [
     tags: ["Cybersecurity", "Ethical Hacking", "Network Security", "Penetration Testing"],
     image: "/placeholder.svg?height=200&width=300",
   },
-  
+
   {
     id: 10,
     title: "Tech + Management / Leadership",
@@ -168,9 +169,16 @@ const courses: Course[] = [
    COMPONENT
 ========================= */
 export default function ResultsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
- 
+
   const router = useRouter()
-  const surveyId = searchParams.id
+  const [surveyId, setSurveyId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const id = searchParams?.id
+    if (id) {
+      setSurveyId(Array.isArray(id) ? id[0] : id)
+    }
+  }, [searchParams])
 
   const [recommendedCourses, setRecommendedCourses] = useState<Course[]>([])
   const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([])
@@ -179,30 +187,30 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
   const [isExporting, setIsExporting] = useState(false)
   const [passwordInput, setPasswordInput] = useState("")
   const [isExportAuthorized, setIsExportAuthorized] = useState(false)
-// =========================
-// RANDOM RESULT FUNCTION
-// =========================
-const getRandomResult = <T,>(arr: T[]): T[] => {
-  const result: T[] = []
-  const copy = [...arr]
-  const count = Math.floor(Math.random() * arr.length) + 1
+  // =========================
+  // RANDOM RESULT FUNCTION
+  // =========================
+  const getRandomResult = <T,>(arr: T[]): T[] => {
+    const result: T[] = []
+    const copy = [...arr]
+    const count = Math.floor(Math.random() * arr.length) + 1
 
-  for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * copy.length)
-    result.push(copy.splice(randomIndex, 1)[0])
+    for (let i = 0; i < count; i++) {
+      const randomIndex = Math.floor(Math.random() * copy.length)
+      result.push(copy.splice(randomIndex, 1)[0])
+    }
+
+    return result
   }
-
-  return result
-}
 
   /* =========================
      LOAD COURSES
   ========================= */
   useEffect(() => {
-  const randomCourses = getRandomResult(courses)
-  setRecommendedCourses(randomCourses)
-  setLoading(false)
-}, [])
+    const randomCourses = getRandomResult(courses)
+    setRecommendedCourses(randomCourses)
+    setLoading(false)
+  }, [])
 
 
   /* =========================
@@ -220,7 +228,10 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
      SAVE SELECTED COURSES (ONCE)
   ========================= */
   const saveSelectedCourses = async () => {
-    if (!surveyId) {
+    const effectiveSurveyId =
+      surveyId ?? (Array.isArray(searchParams?.id) ? searchParams.id[0] : searchParams?.id)
+
+    if (!effectiveSurveyId) {
       alert("Survey ID missing")
       return
     }
@@ -230,7 +241,7 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
       return
     }
 
-    const storageKey = `courses_saved_${surveyId}`
+    const storageKey = `courses_saved_${effectiveSurveyId}`
     if (localStorage.getItem(storageKey) === "true") {
       alert("Courses already saved")
       return
@@ -239,15 +250,54 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
     try {
       setIsSubmitting(true)
 
-      await axios.post("https://course-lbe8.onrender.com/api/recommendations", {
-        survey_response_id: Number(surveyId),
-        course_ids: selectedCourseIds, // ✅ ONLY IDS
-      })
+      // Build detailed course objects for backend along with createdAt
+      const selectedCourses = recommendedCourses.filter((c) =>
+        selectedCourseIds.includes(c.id)
+      )
 
-      localStorage.setItem(storageKey, "true")
-      alert("Courses saved successfully ✅")
+      const mappedCourses = selectedCourses.map((course) => ({
+        survey_response_id: Number(effectiveSurveyId),
+        title: course.title,
+        description: course.description,
+        instructor: course.instructor,
+        duration: course.duration,
+        level: course.level,
+        rating: course.rating,
+        students: course.students,
+        price: course.price,
+        image: course.image,
+        createdAt: new Date().toISOString(),
+      }))
+
+      const payload = {
+        survey_response_id: Number(effectiveSurveyId),
+        course_ids: selectedCourseIds,
+        courses: mappedCourses,
+        created_at: moment().format('MMMM Do YYYY, h:mm:ss a'),
+      }
+
+      console.log("Saving recommendations payload:", payload)
+
+      const response = await axios.post(
+        "https://course-lbe8.onrender.com/api/recommendations",
+        payload
+      )
+
+      console.log("API response:", response)
+
+      if (response.status >= 200 && response.status < 300) {
+        localStorage.setItem(storageKey, "true")
+        alert("Courses saved successfully ✅")
+        // Excel export code here...
+      } else {
+        console.error("Unexpected response status:", response.status, response.data)
+        alert("Something went wrong. Please try again later.")
+      }
     } catch (error) {
-      console.error(error)
+      console.error(
+        "API error:",
+        (error as any).response?.data ?? (error as any).response ?? (error as any).message
+      )
       alert("Failed to save courses ❌")
     } finally {
       setIsSubmitting(false)
@@ -260,6 +310,16 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
   const handleExportToExcel = async () => {
     try {
       setIsExporting(true)
+
+      // Build selected courses data and use a simple date format for export
+      const selectedCourses = recommendedCourses.filter((c) =>
+        selectedCourseIds.includes(c.id)
+      )
+
+      const coursesData = selectedCourses.map((course) => ({
+        ...course,
+        date: new Date().toLocaleString(), // Simpler date format
+      }))
 
       const response = await axios.get(
         "https://course-lbe8.onrender.com/api/surveys/export-with-courses",
@@ -348,11 +408,10 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
             <Card
               key={course.id}
               onClick={() => toggleCourse(course.id)}
-              className={`cursor-pointer border-2 transition ${
-                selected
+              className={`cursor-pointer border-2 transition ${selected
                   ? "border-green-600 bg-green-50"
                   : "border-gray-200"
-              }`}
+                }`}
             >
               <CardHeader>
                 <CardTitle>{course.title}</CardTitle>
