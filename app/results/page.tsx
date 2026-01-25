@@ -169,44 +169,23 @@ const courses: Course[] = [
 ========================= */
 export default function ResultsPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const surveyId = searchParams.get("id")
 
   const [recommendedCourses, setRecommendedCourses] = useState<Course[]>([])
   const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([])
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isExporting, setIsExporting] = useState(false)
-  const [passwordInput, setPasswordInput] = useState("")
-  const [isExportAuthorized, setIsExportAuthorized] = useState(false)
-// =========================
-// RANDOM RESULT FUNCTION
-// =========================
-const getRandomResult = <T,>(arr: T[]): T[] => {
-  const result: T[] = []
-  const copy = [...arr]
-  const count = Math.floor(Math.random() * arr.length) + 1
-
-  for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * copy.length)
-    result.push(copy.splice(randomIndex, 1)[0])
-  }
-
-  return result
-}
 
   /* =========================
-     LOAD COURSES
+     RANDOM COURSES
   ========================= */
   useEffect(() => {
-  const randomCourses = getRandomResult(courses)
-  setRecommendedCourses(randomCourses)
-  setLoading(false)
-}, [])
-
+    const shuffled = [...courses].sort(() => 0.5 - Math.random())
+    setRecommendedCourses(shuffled.slice(0, 3))
+    setLoading(false)
+  }, [])
 
   /* =========================
-     SELECT / UNSELECT COURSE
+     SELECT / UNSELECT
   ========================= */
   const toggleCourse = (courseId: number) => {
     setSelectedCourseIds((prev) =>
@@ -217,11 +196,14 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
   }
 
   /* =========================
-     SAVE SELECTED COURSES (ONCE)
+     SAVE (FINAL STORE)
   ========================= */
   const saveSelectedCourses = async () => {
-    if (!surveyId) {
-      alert("Survey ID missing")
+    const surveyData = localStorage.getItem("survey_answers")
+
+    if (!surveyData) {
+      alert("Survey data missing. Please fill quiz again.")
+      router.push("/quiz")
       return
     }
 
@@ -230,73 +212,37 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
       return
     }
 
-    const storageKey = `courses_saved_${surveyId}`
-    if (localStorage.getItem(storageKey) === "true") {
-      alert("Courses already saved")
-      return
-    }
-
     try {
       setIsSubmitting(true)
 
-      await axios.post("https://course-lbe8.onrender.com/api/recommendations", {
-        survey_response_id: Number(surveyId),
-        course_ids: selectedCourseIds, // ✅ ONLY IDS
-      })
+      const payload = {
+        survey_answers: JSON.parse(surveyData), // ✅ all 25 fields
+        course_ids: selectedCourseIds,          // ✅ selected courses
+        createdAt: new Date().toISOString(),
+      }
 
-      localStorage.setItem(storageKey, "true")
-      alert("Courses saved successfully ✅")
-    } catch (error) {
+      await axios.post(
+        "https://course-lbe8.onrender.com/api/complete-survey",
+        payload
+      )
+
+      alert("✅ Complete data saved successfully")
+
+      localStorage.removeItem("survey_answers")
+    } catch (error: any) {
       console.error(error)
-      alert("Failed to save courses ❌")
+      alert(
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to save data"
+      )
     } finally {
       setIsSubmitting(false)
     }
   }
 
   /* =========================
-     EXPORT EXCEL
-  ========================= */
-  const handleExportToExcel = async () => {
-    try {
-      setIsExporting(true)
-
-      const response = await axios.get(
-        "https://course-lbe8.onrender.com/api/surveys/export-with-courses",
-        { responseType: "blob" }
-      )
-
-      const blob = new Blob([response.data], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      })
-
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement("a")
-      link.href = url
-      link.download = "survey-report.xlsx"
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      window.URL.revokeObjectURL(url)
-    } catch {
-      alert("Excel export failed")
-    } finally {
-      setIsExporting(false)
-    }
-  }
-
-  /*const handleAuthorize = () => {
-    if (passwordInput === "1234") {
-      setIsExportAuthorized(true)
-      setPasswordInput("")
-    } else {
-      alert("Incorrect password")
-    }
-  }
-*/
-  /* =========================
-     UI
+     LOADER
   ========================= */
   if (loading) {
     return (
@@ -306,38 +252,23 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
     )
   }
 
+  /* =========================
+     UI
+  ========================= */
   return (
     <div className="min-h-screen p-6">
       <h1 className="text-3xl font-bold text-center mb-6">
         Personalized Course Recommendations
       </h1>
 
-      <div className="flex justify-center gap-4 mb-6 flex-wrap">
-        <Button onClick={() => router.push("/quiz")} variant="outline">
+      <div className="flex justify-center gap-4 mb-6">
+        <Button variant="outline" onClick={() => router.push("/quiz")}>
           Retake Quiz
         </Button>
 
         <Button onClick={saveSelectedCourses} disabled={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save Selected Courses"}
         </Button>
-
-        {/* {!isExportAuthorized ? (
-          <>
-            <input
-              type="password"
-              placeholder="Admin password"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              className="border px-2 py-1"
-            />
-            <Button onClick={handleAuthorize}>Unlock Export</Button>
-          </>
-        ) : (
-          <Button onClick={handleExportToExcel} disabled={isExporting}>
-            <Download className="w-4 h-4 mr-1" />
-            Export Excel
-          </Button>
-        )} */}
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
@@ -349,9 +280,7 @@ const getRandomResult = <T,>(arr: T[]): T[] => {
               key={course.id}
               onClick={() => toggleCourse(course.id)}
               className={`cursor-pointer border-2 transition ${
-                selected
-                  ? "border-green-600 bg-green-50"
-                  : "border-gray-200"
+                selected ? "border-green-600 bg-green-50" : "border-gray-200"
               }`}
             >
               <CardHeader>
