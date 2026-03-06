@@ -171,50 +171,23 @@ const courses: Course[] = [
 export default function ResultsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
 
   const router = useRouter()
-  const [surveyId, setSurveyId] = useState<string | null>(null)
-
-  useEffect(() => {
-    const id = searchParams?.id
-    if (id) {
-      setSurveyId(Array.isArray(id) ? id[0] : id)
-    }
-  }, [searchParams])
 
   const [recommendedCourses, setRecommendedCourses] = useState<Course[]>([])
   const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([])
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isExporting, setIsExporting] = useState(false)
-  const [passwordInput, setPasswordInput] = useState("")
-  const [isExportAuthorized, setIsExportAuthorized] = useState(false)
-  // =========================
-  // RANDOM RESULT FUNCTION
-  // =========================
-  const getRandomResult = <T,>(arr: T[]): T[] => {
-    const result: T[] = []
-    const copy = [...arr]
-    const count = Math.floor(Math.random() * arr.length) + 1
-
-    for (let i = 0; i < count; i++) {
-      const randomIndex = Math.floor(Math.random() * copy.length)
-      result.push(copy.splice(randomIndex, 1)[0])
-    }
-
-    return result
-  }
 
   /* =========================
-     LOAD COURSES
+     RANDOM COURSES
   ========================= */
   useEffect(() => {
-    const randomCourses = getRandomResult(courses)
-    setRecommendedCourses(randomCourses)
+    const shuffled = [...courses].sort(() => 0.5 - Math.random())
+    setRecommendedCourses(shuffled.slice(0, 3))
     setLoading(false)
   }, [])
 
-
   /* =========================
-     SELECT / UNSELECT COURSE
+     SELECT / UNSELECT
   ========================= */
   const toggleCourse = (courseId: number) => {
     setSelectedCourseIds((prev) =>
@@ -225,14 +198,14 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
   }
 
   /* =========================
-     SAVE SELECTED COURSES (ONCE)
+     SAVE (FINAL STORE)
   ========================= */
   const saveSelectedCourses = async () => {
-    const effectiveSurveyId =
-      surveyId ?? (Array.isArray(searchParams?.id) ? searchParams.id[0] : searchParams?.id)
+    const surveyData = localStorage.getItem("survey_answers")
 
-    if (!effectiveSurveyId) {
-      alert("Survey ID missing")
+    if (!surveyData) {
+      alert("Survey data missing. Please fill quiz again.")
+      router.push("/quiz")
       return
     }
 
@@ -241,122 +214,37 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
       return
     }
 
-    const storageKey = `courses_saved_${effectiveSurveyId}`
-    if (localStorage.getItem(storageKey) === "true") {
-      alert("Courses already saved")
-      return
-    }
-
     try {
       setIsSubmitting(true)
 
-      // Build detailed course objects for backend along with createdAt
-      const selectedCourses = recommendedCourses.filter((c) =>
-        selectedCourseIds.includes(c.id)
-      )
-
-      const mappedCourses = selectedCourses.map((course) => ({
-        survey_response_id: Number(effectiveSurveyId),
-        title: course.title,
-        description: course.description,
-        instructor: course.instructor,
-        duration: course.duration,
-        level: course.level,
-        rating: course.rating,
-        students: course.students,
-        price: course.price,
-        image: course.image,
-        createdAt: new Date().toISOString(),
-      }))
-
       const payload = {
-        survey_response_id: Number(effectiveSurveyId),
-        course_ids: selectedCourseIds,
-        courses: mappedCourses,
-        created_at: moment().format('MMMM Do YYYY, h:mm:ss a'),
+        survey_answers: JSON.parse(surveyData), // ✅ all 25 fields
+        course_ids: selectedCourseIds,          // ✅ selected courses
+        createdAt: new Date().toISOString(),
       }
 
-      console.log("Saving recommendations payload:", payload)
-
-      const response = await axios.post(
-        "https://course-lbe8.onrender.com/api/recommendations",
+      await axios.post(
+        "https://course-qf7m.onrender.com/api/surveys",
         payload
       )
 
-      console.log("API response:", response)
+      alert("✅ Complete data saved successfully")
 
-      if (response.status >= 200 && response.status < 300) {
-        localStorage.setItem(storageKey, "true")
-        alert("Courses saved successfully ✅")
-        // Excel export code here...
-      } else {
-        console.error("Unexpected response status:", response.status, response.data)
-        alert("Something went wrong. Please try again later.")
-      }
-    } catch (error) {
-      console.error(
-        "API error:",
-        (error as any).response?.data ?? (error as any).response ?? (error as any).message
+      localStorage.removeItem("survey_answers")
+    } catch (error: any) {
+      console.error(error)
+      alert(
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to save data"
       )
-      alert("Failed to save courses ❌")
     } finally {
       setIsSubmitting(false)
     }
   }
 
   /* =========================
-     EXPORT EXCEL
-  ========================= */
-  const handleExportToExcel = async () => {
-    try {
-      setIsExporting(true)
-
-      // Build selected courses data and use a simple date format for export
-      const selectedCourses = recommendedCourses.filter((c) =>
-        selectedCourseIds.includes(c.id)
-      )
-
-      const coursesData = selectedCourses.map((course) => ({
-        ...course,
-        date: new Date().toLocaleString(), // Simpler date format
-      }))
-
-      const response = await axios.get(
-        "https://course-lbe8.onrender.com/api/surveys/export-with-courses",
-        { responseType: "blob" }
-      )
-
-      const blob = new Blob([response.data], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      })
-
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement("a")
-      link.href = url
-      link.download = "survey-report.xlsx"
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      window.URL.revokeObjectURL(url)
-    } catch {
-      alert("Excel export failed")
-    } finally {
-      setIsExporting(false)
-    }
-  }
-
-  /*const handleAuthorize = () => {
-    if (passwordInput === "1234") {
-      setIsExportAuthorized(true)
-      setPasswordInput("")
-    } else {
-      alert("Incorrect password")
-    }
-  }
-*/
-  /* =========================
-     UI
+     LOADER
   ========================= */
   if (loading) {
     return (
@@ -366,38 +254,23 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
     )
   }
 
+  /* =========================
+     UI
+  ========================= */
   return (
     <div className="min-h-screen p-6">
       <h1 className="text-3xl font-bold text-center mb-6">
         Personalized Course Recommendations
       </h1>
 
-      <div className="flex justify-center gap-4 mb-6 flex-wrap">
-        <Button onClick={() => router.push("/quiz")} variant="outline">
+      <div className="flex justify-center gap-4 mb-6">
+        <Button variant="outline" onClick={() => router.push("/quiz")}>
           Retake Quiz
         </Button>
 
         <Button onClick={saveSelectedCourses} disabled={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save Selected Courses"}
         </Button>
-
-        {/* {!isExportAuthorized ? (
-          <>
-            <input
-              type="password"
-              placeholder="Admin password"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              className="border px-2 py-1"
-            />
-            <Button onClick={handleAuthorize}>Unlock Export</Button>
-          </>
-        ) : (
-          <Button onClick={handleExportToExcel} disabled={isExporting}>
-            <Download className="w-4 h-4 mr-1" />
-            Export Excel
-          </Button>
-        )} */}
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
@@ -408,10 +281,9 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
             <Card
               key={course.id}
               onClick={() => toggleCourse(course.id)}
-              className={`cursor-pointer border-2 transition ${selected
-                  ? "border-green-600 bg-green-50"
-                  : "border-gray-200"
-                }`}
+              className={`cursor-pointer border-2 transition ${
+                selected ? "border-green-600 bg-green-50" : "border-gray-200"
+              }`}
             >
               <CardHeader>
                 <CardTitle>{course.title}</CardTitle>
