@@ -222,7 +222,7 @@ export default function ResultsPage() {
       }
 
       await axios.post(
-        "https://course-lbe8.onrender.com/api/complete-survey",
+        "https://course-qf7m.onrender.com/api/surveys",
         payload
       )
 
