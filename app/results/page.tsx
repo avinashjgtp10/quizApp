@@ -1,30 +1,31 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import axios from "axios"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Download } from "lucide-react"
+import moment from "moment";
 
 import { ref, push, onValue } from "firebase/database"
 import { database } from "@/lib/firebase"
 
 interface Course {
   //survery_response_id:number
-  id:number
-  title:string
-  description:string
-  instructor:string
-  duration:string
-  level:string
-  rating:number
-  students:number
-  price:string
-  tags:string[]
-  image:string
+  id: number
+  title: string
+  description: string
+  instructor: string
+  duration: string
+  level: string
+  rating: number
+  students: number
+  price: string
+  tags: string[]
+  image: string
 }
 
 const courses: Course[] = [
@@ -149,7 +150,7 @@ const courses: Course[] = [
     tags: ["Cybersecurity", "Ethical Hacking", "Network Security", "Penetration Testing"],
     image: "/placeholder.svg?height=200&width=300",
   },
-  
+
   {
     id: 10,
     title: "Tech + Management / Leadership",
@@ -167,7 +168,8 @@ const courses: Course[] = [
 /* =========================
    COMPONENT
 ========================= */
-export default function ResultsPage() {
+export default function ResultsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+
   const router = useRouter()
 
   const [recommendedCourses, setRecommendedCourses] = useState<Course[]>([])
