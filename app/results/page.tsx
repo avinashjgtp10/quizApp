@@ -218,7 +218,7 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
       setIsSubmitting(true)
 
       const payload = {
-        survey_answers: JSON.parse(surveyData), // ✅ all 25 fields
+        ...JSON.parse(surveyData), // ✅ all 25 fields at the root level
         course_ids: selectedCourseIds,          // ✅ selected courses
         createdAt: new Date().toISOString(),
       }
@@ -281,9 +281,8 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
             <Card
               key={course.id}
               onClick={() => toggleCourse(course.id)}
-              className={`cursor-pointer border-2 transition ${
-                selected ? "border-green-600 bg-green-50" : "border-gray-200"
-              }`}
+              className={`cursor-pointer border-2 transition ${selected ? "border-green-600 bg-green-50" : "border-gray-200"
+                }`}
             >
               <CardHeader>
                 <CardTitle>{course.title}</CardTitle>

@@ -38,7 +38,7 @@ export default function HomePage() {
       setIsExporting(true)
 
       const response = await axios.get(
-        "https://course-lbe8.onrender.com/api/surveys/export-with-courses",
+        "https://course-qf7m.onrender.com/api/surveys/export-with-courses",
         { responseType: "blob" }
       )
 
@@ -68,7 +68,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6 text-center">
-      
+
       <h1 className="text-3xl font-bold mb-4 text-indigo-700">
         Welcome to the Course Finder
       </h1>
