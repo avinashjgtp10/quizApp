@@ -223,10 +223,23 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
         createdAt: new Date().toISOString(),
       }
 
-      await axios.post(
+      const response = await axios.post(
         "https://course-qf7m.onrender.com/api/surveys",
         payload
       )
+
+      const surveyId = response.data.id;
+
+      // ✅ SECOND CALL: Save selected recommendations
+      if (surveyId) {
+        await axios.post(
+          "https://course-qf7m.onrender.com/api/recommendations",
+          {
+            survey_response_id: surveyId,
+            course_ids: selectedCourseIds
+          }
+        )
+      }
 
       alert("✅ Complete data saved successfully")
 
