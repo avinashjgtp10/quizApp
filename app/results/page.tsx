@@ -224,7 +224,7 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
       }
 
       const response = await axios.post(
-        "https://course-qf7m.onrender.com/api/surveys",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/surveys`,
         payload
       )
 
@@ -233,7 +233,7 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
       // ✅ SECOND CALL: Save selected recommendations
       if (surveyId) {
         await axios.post(
-          "https://course-qf7m.onrender.com/api/recommendations",
+          `${process.env.NEXT_PUBLIC_API_URL}/api/recommendations`,
           {
             survey_response_id: surveyId,
             course_ids: selectedCourseIds

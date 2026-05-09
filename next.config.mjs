@@ -2,9 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -13,7 +10,10 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  // ✅ Required for App Router projects on Vercel
+  turbopack: {
+    root: import.meta.dirname,
+  },
+
   output: "standalone",
 }
 

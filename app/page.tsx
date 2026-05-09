@@ -38,7 +38,7 @@ export default function HomePage() {
       setIsExporting(true)
 
       const response = await axios.get(
-        "https://course-qf7m.onrender.com/api/surveys/export-with-courses",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/surveys/export-with-courses`,
         { responseType: "blob" }
       )
 
