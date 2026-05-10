@@ -1,0 +1,9 @@
+1:"$Sreact.fragment"
+2:I[30814,["/quizApp/_next/static/chunks/d1e6aa3a5ed99306.js","/quizApp/_next/static/chunks/169661fd0e2f118d.js"],"ClientPageRoot"]
+3:I[5084,["/quizApp/_next/static/chunks/8cb253368bce6954.js","/quizApp/_next/static/chunks/b1209c4534604ffe.js","/quizApp/_next/static/chunks/ce4c5f6adacb34de.js"],"default"]
+6:I[43152,["/quizApp/_next/static/chunks/d1e6aa3a5ed99306.js","/quizApp/_next/static/chunks/169661fd0e2f118d.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+0:{"buildId":"XCPqPKbcxt_v5S2XxofDq","rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"/quizApp/_next/static/chunks/8cb253368bce6954.js","async":true}],["$","script","script-1",{"src":"/quizApp/_next/static/chunks/b1209c4534604ffe.js","async":true}],["$","script","script-2",{"src":"/quizApp/_next/static/chunks/ce4c5f6adacb34de.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"loading":null,"isPartial":false}
+4:{}
+5:"$0:rsc:props:children:0:props:serverProvidedParams:params"
+8:null

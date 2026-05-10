@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[43152,["/quizApp/_next/static/chunks/d1e6aa3a5ed99306.js","/quizApp/_next/static/chunks/169661fd0e2f118d.js"],"ViewportBoundary"]
+3:I[43152,["/quizApp/_next/static/chunks/d1e6aa3a5ed99306.js","/quizApp/_next/static/chunks/169661fd0e2f118d.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"XCPqPKbcxt_v5S2XxofDq","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"v0 App"}],["$","meta","1",{"name":"description","content":"Created with v0"}],["$","meta","2",{"name":"generator","content":"v0.dev"}]]}]}]}],null]}],"loading":null,"isPartial":false}
