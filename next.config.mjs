@@ -10,11 +10,9 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  turbopack: {
-    root: import.meta.dirname,
-  },
-
-  output: "standalone",
+  output: "export",
+  basePath: "/quizApp",
+  trailingSlash: true,
 }
 
 export default nextConfig
