@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === "production"
+
 const nextConfig = {
   reactStrictMode: true,
 
@@ -11,8 +13,8 @@ const nextConfig = {
   },
 
   output: "export",
-  basePath: "/quizApp",
-  trailingSlash: true,
+  basePath: isProd ? "/quizApp" : "",
+  trailingSlash: isProd,
 }
 
 export default nextConfig
